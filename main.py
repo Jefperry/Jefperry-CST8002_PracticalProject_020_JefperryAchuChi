@@ -1,7 +1,7 @@
 """
 CST8002 - Data-Driven Programming
 Professor: Stanley Pieda
-Due Date: [Due Date]
+Due Date: September 21 2025
 Author: Jefperry Achu Chi
 
 main.py - Main program for reading and processing Pacific Rim NPR Coastal Marine Kelp Fish Community data
@@ -10,42 +10,44 @@ main.py - Main program for reading and processing Pacific Rim NPR Coastal Marine
 import csv
 from KelpFishRecord import KelpFishRecord
 
+
 def read_kelp_fish_data(filename):
     """
     Read kelp fish community data from CSV file and create record objects.
-    
+
     Args:
         filename (str): Path to the CSV file
-        
+
     Returns:
         list: List of KelpFishRecord objects
-        
+
     Raises:
         FileNotFoundError: If the CSV file is not found
         Exception: For other file reading errors
     """
     records = []
-    
+
     try:
         with open(filename, 'r', newline='', encoding='utf-8') as csvfile:
             # Use csv.reader to properly handle CSV format
             csv_reader = csv.reader(csvfile)
-            
+
             # Skip the header row (first row)
             next(csv_reader)
-            
+
             # Read first few records for demonstration
             record_count = 0
             for row in csv_reader:
                 if record_count >= 10:  # Limit to first 10 records for demonstration
                     break
-                    
+
                 if len(row) >= 8:  # Ensure we have all required columns
                     # Create KelpFishRecord object using column names from dataset
                     record = KelpFishRecord(
                         site_identification=row[0].strip(),
                         year=int(row[1]) if row[1].strip() else 0,
-                        diver_identication=int(row[2]) if row[2].strip() else 0,
+                        diver_identication=int(
+                            row[2]) if row[2].strip() else 0,
                         transect=int(row[3]) if row[3].strip() else 0,
                         average_depth_ft=row[4].strip(),
                         species_code=row[5].strip(),
@@ -54,7 +56,7 @@ def read_kelp_fish_data(filename):
                     )
                     records.append(record)
                     record_count += 1
-                    
+
     except FileNotFoundError:
         print(f"Error: The file '{filename}' was not found.")
         print("Please ensure the CSV file is in the correct location.")
@@ -62,8 +64,9 @@ def read_kelp_fish_data(filename):
     except Exception as e:
         print(f"Error reading the file: {e}")
         raise
-    
+
     return records
+
 
 def main():
     """
@@ -71,42 +74,52 @@ def main():
     """
     print()
     print("Pacific Rim NPR Coastal Marine Kelp Fish Community Data")
+    print("Author: Jefperry Achu Chi")
     print()
     print()
-    
+
     # CSV filename - using the exact dataset column names in processing
     csv_filename = "pacific_rim_npr_coastalmarine_kelp_fish_community_2008-2016_data.csv"
-    
+
     try:
         # Read data from CSV file using File-IO
         kelp_fish_records = read_kelp_fish_data(csv_filename)
-        
+
         if kelp_fish_records:
-            print(f"Successfully loaded {len(kelp_fish_records)} records from the dataset.")
+            print(
+                f"Successfully loaded {len(kelp_fish_records)} records from the dataset.")
             print()
-            
+
             # Loop over the data structure and output record data on screen
             print("Displaying Kelp Fish Community Survey Records:")
-            print("-" * 60)
-            
+            print()
+
             for i, record in enumerate(kelp_fish_records, 1):
                 print(f"Record {i}:")
-                print(f"  Site Identification: {record.get_site_identification()}")
+                print(
+                    f"  Site Identification: {record.get_site_identification()}")
                 print(f"  Year: {record.get_year()}")
-                print(f"  Diver Identification: {record.get_diver_identication()}")
+                print(
+                    f"  Diver Identification: {record.get_diver_identication()}")
                 print(f"  Transect: {record.get_transect()}")
-                print(f"  Average Depth (ft): {record.get_average_depth_ft() if record.get_average_depth_ft() else 'N/A'}")
+                print(
+                    f"  Average Depth (ft): {record.get_average_depth_ft() if record.get_average_depth_ft() else 'N/A'}")
                 print(f"  Species Code: {record.get_species_code()}")
                 print(f"  Count: {record.get_count()}")
                 print(f"  Survey Type: {record.get_survey_type()}")
                 print()
         else:
             print("No records were loaded from the dataset.")
-            
+
     except Exception:
         # Exception handling for file operations
         print("Program terminated due to file reading error.")
         return
+
+    print()
+    print("Program completed successfully - Jefperry Achu Chi")
+    print()
+
 
 if __name__ == "__main__":
     main()
