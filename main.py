@@ -117,7 +117,7 @@ def main():
         return
 
     print()
-    print("Program completed successfully - Jefperry Achu Chi")
+    print("Program completed successfully  by Jefperry Achu Chi")
     print()
 
 
