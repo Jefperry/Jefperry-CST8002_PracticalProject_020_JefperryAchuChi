@@ -69,9 +69,9 @@ def main():
     """
     Main function to execute the program.
     """
-    print("=" * 60)
+    print()
     print("Pacific Rim NPR Coastal Marine Kelp Fish Community Data")
-    print("=" * 60)
+    print()
     print()
     
     # CSV filename - using the exact dataset column names in processing
@@ -84,6 +84,22 @@ def main():
         if kelp_fish_records:
             print(f"Successfully loaded {len(kelp_fish_records)} records from the dataset.")
             print()
+            
+            # Loop over the data structure and output record data on screen
+            print("Displaying Kelp Fish Community Survey Records:")
+            print("-" * 60)
+            
+            for i, record in enumerate(kelp_fish_records, 1):
+                print(f"Record {i}:")
+                print(f"  Site Identification: {record.get_site_identification()}")
+                print(f"  Year: {record.get_year()}")
+                print(f"  Diver Identification: {record.get_diver_identication()}")
+                print(f"  Transect: {record.get_transect()}")
+                print(f"  Average Depth (ft): {record.get_average_depth_ft() if record.get_average_depth_ft() else 'N/A'}")
+                print(f"  Species Code: {record.get_species_code()}")
+                print(f"  Count: {record.get_count()}")
+                print(f"  Survey Type: {record.get_survey_type()}")
+                print()
         else:
             print("No records were loaded from the dataset.")
             
