@@ -1,7 +1,7 @@
 """
 CST8002 - Data-Driven Programming - Practical Project 2
 Professor: Stanley Pieda
-Due Date: [Due Date]
+Due Date: October 12, 2025
 Author: Jefperry Achu Chi
 
 data_access.py - Persistence layer: Handles all File-IO operations for CSV data

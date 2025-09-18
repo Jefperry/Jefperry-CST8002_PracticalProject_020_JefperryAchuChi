@@ -1,7 +1,7 @@
 """
 CST8002 - Data-Driven Programming - Practical Project 2
 Professor: Stanley Pieda
-Due Date: [Due Date]
+Due Date: October 12, 2025
 Author: Jefperry Achu Chi
 
 kelp_fish_record.py - Model layer: Record object class for Pacific Rim NPR Coastal Marine Kelp Fish Community data

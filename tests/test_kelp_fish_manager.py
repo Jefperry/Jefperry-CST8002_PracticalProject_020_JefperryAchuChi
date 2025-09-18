@@ -1,21 +1,20 @@
 """
 CST8002 - Data-Driven Programming - Practical Project 2
 Professor: Stanley Pieda
-Due Date: [Due Date]
+Due Date: October 12, 2025
 Author: Jefperry Achu Chi
 
 test_kelp_fish_manager.py - Unit tests for KelpFishManager business logic
 """
 
+from model.kelp_fish_record import KelpFishRecord
+from business.kelp_fish_manager import KelpFishManager
 import unittest
 import sys
 import os
 
 # Add project root to path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from business.kelp_fish_manager import KelpFishManager
-from model.kelp_fish_record import KelpFishRecord
 
 
 class TestKelpFishManager(unittest.TestCase):
@@ -44,25 +43,25 @@ class TestKelpFishManager(unittest.TestCase):
     def test_add_record_to_memory_structure(self):
         """
         Unit test: Does the program add a new record into the sequential data structure?
-        
+
         This test verifies that the business layer correctly adds a new record
         to the in-memory data structure and that the record can be retrieved.
         """
         # Arrange - setup is done in setUp()
         initial_count = self.manager.get_record_count()
-        
+
         # Act - add the test record
         success = self.manager.add_record(self.test_record)
-        
+
         # Assert - verify the record was added successfully
         self.assertTrue(success, "Record should be added successfully")
-        self.assertEqual(self.manager.get_record_count(), initial_count + 1, 
-                        "Record count should increase by 1")
-        
+        self.assertEqual(self.manager.get_record_count(), initial_count + 1,
+                         "Record count should increase by 1")
+
         # Verify the record is actually in the data structure
         all_records = self.manager.get_all_records()
         added_record = all_records[-1]  # Should be the last record added
-        
+
         self.assertEqual(added_record.get_site_identification(), "TEST")
         self.assertEqual(added_record.get_year(), 2023)
         self.assertEqual(added_record.get_species_code(), "TESTFISH")
@@ -71,12 +70,12 @@ class TestKelpFishManager(unittest.TestCase):
     def test_validation_for_invalid_record(self):
         """
         Additional test: Does the program handle invalid record types correctly?
-        
+
         This test verifies that the business layer correctly rejects non-KelpFishRecord objects.
         """
         # Test with invalid object type (string instead of KelpFishRecord)
         success = self.manager.add_record("invalid_record")
-        
+
         self.assertFalse(success, "Should reject non-KelpFishRecord objects")
 
     def tearDown(self):
@@ -93,5 +92,5 @@ if __name__ == "__main__":
     print("Running Unit Tests for Kelp Fish Manager")
     print("Program by: Jefperry Achu Chi")
     print("=" * 60)
-    
+
     unittest.main(verbosity=2)
