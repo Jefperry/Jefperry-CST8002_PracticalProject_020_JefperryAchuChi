@@ -7,6 +7,7 @@ Author: Jefperry Achu Chi
 run_tests.py - Test runner that properly handles imports
 """
 
+from tests.test_kelp_fish_manager import TestKelpFishManager
 import sys
 import os
 import unittest
@@ -15,7 +16,6 @@ import unittest
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 # Import test modules
-from tests.test_kelp_fish_manager import TestKelpFishManager
 
 
 def main():
@@ -26,15 +26,15 @@ def main():
     print("Running Unit Tests for Kelp Fish Manager")
     print("Program by: Jefperry Achu Chi")
     print("=" * 60)
-    
+
     # Create test suite
     loader = unittest.TestLoader()
     suite = loader.loadTestsFromTestCase(TestKelpFishManager)
-    
+
     # Run tests with verbose output
     runner = unittest.TextTestRunner(verbosity=2)
     result = runner.run(suite)
-    
+
     print("\n" + "=" * 60)
     print(f"Tests completed by: Jefperry Achu Chi")
     print(f"Tests run: {result.testsRun}")
