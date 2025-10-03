@@ -22,10 +22,10 @@ def main():
     """
     Main function to run unit tests with proper header.
     """
-    print("=" * 60)
+    print()
     print("Running Unit Tests for Kelp Fish Manager")
     print("Program by: Jefperry Achu Chi")
-    print("=" * 60)
+    print()
 
     # Create test suite
     loader = unittest.TestLoader()
@@ -35,12 +35,12 @@ def main():
     runner = unittest.TextTestRunner(verbosity=2)
     result = runner.run(suite)
 
-    print("\n" + "=" * 60)
+    print()
     print(f"Tests completed by: Jefperry Achu Chi")
     print(f"Tests run: {result.testsRun}")
     print(f"Failures: {len(result.failures)}")
     print(f"Errors: {len(result.errors)}")
-    print("=" * 60)
+    print()
 
 
 if __name__ == "__main__":
