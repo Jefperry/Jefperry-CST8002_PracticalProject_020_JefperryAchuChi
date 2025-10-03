@@ -31,19 +31,19 @@ class ConsoleInterface:
         """
         Display the application header with author name.
         """
-        print("=" * 70)
+        print()
         print("Pacific Rim NPR Coastal Marine Kelp Fish Community Data Manager")
         print(f"Program by: {self.author_name}")
-        print("=" * 70)
+        print()
         print()
 
     def display_menu(self):
         """
         Display the main menu options.
         """
-        print("\n" + "=" * 50)
+        print()
         print(f"MAIN MENU - Program by {self.author_name}")
-        print("=" * 50)
+        print()
         print("1. Load/Reload Data from Dataset")
         print("2. Display Records")
         print("3. Search Records")
@@ -53,7 +53,7 @@ class ConsoleInterface:
         print("7. Persist Data to File")
         print("8. Show Statistics")
         print("9. Exit")
-        print("=" * 50)
+        print()
 
     def get_user_choice(self):
         """
@@ -95,7 +95,7 @@ class ConsoleInterface:
         """
         Handle displaying records with various options.
         """
-        print(f"\n--- Display Records - {self.author_name} ---")
+        print(f"\n-Display Records - {self.author_name} ")
         print("1. Display all records")
         print("2. Display single record by index")
         print("3. Display records by site")

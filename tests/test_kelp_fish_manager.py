@@ -88,9 +88,9 @@ class TestKelpFishManager(unittest.TestCase):
 
 if __name__ == "__main__":
     # Run the unit tests
-    print("=" * 60)
+    print()
     print("Running Unit Tests for Kelp Fish Manager")
     print("Program by: Jefperry Achu Chi")
-    print("=" * 60)
+    print()
 
     unittest.main(verbosity=2)
