@@ -1,10 +1,11 @@
 """
-CST8002 - Data-Driven Programming - Practical Project 2
+CST8002 - Data-Driven Programming - Practical Project 3
 Professor: Stanley Pieda
-Due Date: October 12, 2025
+Due Date: October 27, 2025
 Author: Jefperry Achu Chi
 
 kelp_fish_record.py - Model layer: Record object class for Pacific Rim NPR Coastal Marine Kelp Fish Community data
+Enhanced with sorting support for advanced data structure operations
 """
 
 
@@ -249,3 +250,62 @@ class KelpFishRecord:
                 self.species_code == other.species_code and
                 self.count == other.count and
                 self.survey_type == other.survey_type)
+
+    def __lt__(self, other):
+        """
+        Less than comparison operator for sorting support.
+        Default comparison based on year, then site identification.
+
+        Args:
+            other (KelpFishRecord): Another KelpFishRecord to compare with
+
+        Returns:
+            bool: True if this record is less than other record
+        """
+        if not isinstance(other, KelpFishRecord):
+            return NotImplemented
+        if self.year != other.year:
+            return self.year < other.year
+        return self.site_identification < other.site_identification
+
+    def __le__(self, other):
+        """
+        Less than or equal comparison operator.
+
+        Args:
+            other (KelpFishRecord): Another KelpFishRecord to compare with
+
+        Returns:
+            bool: True if this record is less than or equal to other record
+        """
+        if not isinstance(other, KelpFishRecord):
+            return NotImplemented
+        return self < other or self == other
+
+    def __gt__(self, other):
+        """
+        Greater than comparison operator.
+
+        Args:
+            other (KelpFishRecord): Another KelpFishRecord to compare with
+
+        Returns:
+            bool: True if this record is greater than other record
+        """
+        if not isinstance(other, KelpFishRecord):
+            return NotImplemented
+        return not self <= other
+
+    def __ge__(self, other):
+        """
+        Greater than or equal comparison operator.
+
+        Args:
+            other (KelpFishRecord): Another KelpFishRecord to compare with
+
+        Returns:
+            bool: True if this record is greater than or equal to other record
+        """
+        if not isinstance(other, KelpFishRecord):
+            return NotImplemented
+        return not self < other
