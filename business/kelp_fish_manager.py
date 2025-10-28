@@ -1,7 +1,7 @@
 """
 CST8002 - Data-Driven Programming - Practical Project 3
 Professor: Stanley Pieda
-Due Date: November , 2025
+Due Date: November 16, 2025
 Author: Jefperry Achu Chi
 
 kelp_fish_manager.py - Business layer: Manages kelp fish data operations and business logic
@@ -259,7 +259,7 @@ class KelpFishManager:
 
             # Sort records using the appropriate key function
             self.records.sort(key=sort_keys[sort_by], reverse=reverse)
-            
+
             return True
 
         except Exception as e:
@@ -309,7 +309,7 @@ class KelpFishManager:
             # Sort using compound key (primary criterion determines overall reverse)
             primary_reverse = criteria_list[0][1] if criteria_list else False
             self.records.sort(key=compound_key, reverse=primary_reverse)
-            
+
             return True
 
         except Exception as e:
