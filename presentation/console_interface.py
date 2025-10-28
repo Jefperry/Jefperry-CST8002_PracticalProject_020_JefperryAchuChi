@@ -1,10 +1,11 @@
 """
-CST8002 - Data-Driven Programming - Practical Project 2
+CST8002 - Data-Driven Programming - Practical Project 3
 Professor: Stanley Pieda
-Due Date: October 12, 2025
+Due Date: October 27, 2025
 Author: Jefperry Achu Chi
 
 console_interface.py - Presentation layer: Handles all user interactions and display logic
+Enhanced with sorting functionality for advanced data structure operations
 """
 
 from model.kelp_fish_record import KelpFishRecord
@@ -50,9 +51,10 @@ class ConsoleInterface:
         print("4. Create New Record")
         print("5. Edit Record")
         print("6. Delete Record")
-        print("7. Persist Data to File")
-        print("8. Show Statistics")
-        print("9. Exit")
+        print("7. Sort Records")
+        print("8. Persist Data to File")
+        print("9. Show Statistics")
+        print("10. Exit")
         print()
 
     def get_user_choice(self):
@@ -64,7 +66,7 @@ class ConsoleInterface:
         """
         try:
             choice = input(
-                f"\nEnter your choice (1-9) - {self.author_name}: ").strip()
+                f"\nEnter your choice (1-10) - {self.author_name}: ").strip()
             return int(choice)
         except ValueError:
             return -1
@@ -371,6 +373,124 @@ class ConsoleInterface:
         except ValueError:
             print("Invalid index entered.")
 
+    def sort_records_menu(self):
+        """
+        Handle sorting records with various options.
+        Demonstrates advanced data structure manipulation and sorting algorithms.
+        """
+        print(f"\n--- Sort Records - {self.author_name} ---")
+        
+        if self.manager.get_record_count() == 0:
+            print("No records to sort. Please load data first.")
+            return
+        
+        print("Select sorting criterion:")
+        print("1. Year")
+        print("2. Site Identification")
+        print("3. Species Code")
+        print("4. Count")
+        print("5. Diver Identification")
+        print("6. Transect")
+        print("7. Multiple Criteria (Advanced)")
+        
+        try:
+            sort_choice = int(input(f"\nEnter choice (1-7) - {self.author_name}: "))
+            
+            # Map choice to sort field
+            sort_map = {
+                1: ('year', 'Year'),
+                2: ('site', 'Site Identification'),
+                3: ('species', 'Species Code'),
+                4: ('count', 'Count'),
+                5: ('diver', 'Diver Identification'),
+                6: ('transect', 'Transect')
+            }
+            
+            if sort_choice == 7:
+                # Multiple criteria sorting
+                self.sort_by_multiple_criteria()
+                return
+            
+            if sort_choice not in sort_map:
+                print("Invalid choice.")
+                return
+            
+            sort_field, field_name = sort_map[sort_choice]
+            
+            # Ask for sort order
+            order = input("Sort order - (A)scending or (D)escending? [A]: ").strip().upper()
+            reverse = (order == 'D')
+            
+            print(f"\nSorting records by {field_name} in {'descending' if reverse else 'ascending'} order...")
+            
+            if self.manager.sort_records(sort_field, reverse):
+                print(f"Records sorted successfully by {field_name}!")
+                print(f"Total records: {self.manager.get_record_count()}")
+                
+                # Ask if user wants to see sorted records
+                show = input("\nDisplay sorted records? (Y/n): ").strip().lower()
+                if show != 'n':
+                    print(f"\n--- First 10 Sorted Records - {self.author_name} ---")
+                    records = self.manager.get_all_records()[:10]
+                    for i, record in enumerate(records, 1):
+                        print(f"\nRecord {i}:")
+                        self.print_record_details(record)
+                    if self.manager.get_record_count() > 10:
+                        print(f"\n... and {self.manager.get_record_count() - 10} more records")
+            else:
+                print("Failed to sort records.")
+                
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+        except Exception as e:
+            print(f"Error during sorting: {e}")
+    
+    def sort_by_multiple_criteria(self):
+        """
+        Handle sorting by multiple criteria.
+        Advanced sorting demonstration.
+        """
+        print(f"\n--- Sort by Multiple Criteria - {self.author_name} ---")
+        print("Enter sorting criteria in order of priority.")
+        print("Available fields: year, site, species, count, diver, transect")
+        
+        try:
+            criteria_list = []
+            
+            # Get primary criterion
+            primary = input("Primary sort field: ").strip().lower()
+            if primary not in ['year', 'site', 'species', 'count', 'diver', 'transect']:
+                print("Invalid field name.")
+                return
+            
+            primary_order = input(f"Primary sort order - (A)scending or (D)escending? [A]: ").strip().upper()
+            criteria_list.append((primary, primary_order == 'D'))
+            
+            # Get secondary criterion (optional)
+            secondary = input("Secondary sort field (press Enter to skip): ").strip().lower()
+            if secondary and secondary in ['year', 'site', 'species', 'count', 'diver', 'transect']:
+                secondary_order = input(f"Secondary sort order - (A)scending or (D)escending? [A]: ").strip().upper()
+                criteria_list.append((secondary, secondary_order == 'D'))
+            
+            print(f"\nSorting by multiple criteria: {[f'{c[0]}' for c in criteria_list]}...")
+            
+            if self.manager.sort_records_by_multiple_criteria(criteria_list):
+                print("Records sorted successfully by multiple criteria!")
+                
+                # Show preview
+                show = input("\nDisplay sorted records? (Y/n): ").strip().lower()
+                if show != 'n':
+                    print(f"\n--- First 10 Sorted Records - {self.author_name} ---")
+                    records = self.manager.get_all_records()[:10]
+                    for i, record in enumerate(records, 1):
+                        print(f"\nRecord {i}:")
+                        self.print_record_details(record)
+            else:
+                print("Failed to sort records.")
+                
+        except Exception as e:
+            print(f"Error during multiple criteria sorting: {e}")
+
     def persist_data_menu(self):
         """
         Handle persisting data to file with GUID filename.
@@ -472,16 +592,18 @@ class ConsoleInterface:
             elif choice == 6:
                 self.delete_record_menu()
             elif choice == 7:
-                self.persist_data_menu()
+                self.sort_records_menu()
             elif choice == 8:
-                self.show_statistics_menu()
+                self.persist_data_menu()
             elif choice == 9:
+                self.show_statistics_menu()
+            elif choice == 10:
                 print(f"\nThank you for using the Kelp Fish Data Manager!")
                 print(f"Program by {self.author_name}")
                 print("Goodbye!")
                 break
             else:
-                print("Invalid choice. Please enter a number between 1 and 9.")
+                print("Invalid choice. Please enter a number between 1 and 10.")
 
             # Pause for user to see results
             input(
