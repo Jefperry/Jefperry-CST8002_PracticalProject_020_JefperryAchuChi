@@ -1,10 +1,11 @@
 """
-CST8002 - Data-Driven Programming - Practical Project 2
+CST8002 - Data-Driven Programming - Practical Project 3
 Professor: Stanley Pieda
-Due Date: October 12, 2025
+Due Date: November , 2025
 Author: Jefperry Achu Chi
 
 kelp_fish_manager.py - Business layer: Manages kelp fish data operations and business logic
+Enhanced with advanced data structure sorting capabilities
 """
 
 from persistence.data_access import DataAccess
@@ -223,6 +224,132 @@ class KelpFishManager:
                 matching_records.append(record)
 
         return matching_records
+
+    def sort_records(self, sort_by="year", reverse=False):
+        """
+        Sort records in the data structure based on specified criteria.
+        Demonstrates advanced data structure manipulation and sorting algorithms.
+
+        Args:
+            sort_by (str): Field to sort by - options: 'year', 'site', 'species', 'count', 'diver', 'transect'
+            reverse (bool): If True, sort in descending order; if False, ascending order
+
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            if not self.records:
+                print("No records to sort.")
+                return False
+
+            # Define key functions for different sorting criteria
+            sort_keys = {
+                'year': lambda record: (record.get_year(), record.get_site_identification()),
+                'site': lambda record: (record.get_site_identification(), record.get_year()),
+                'species': lambda record: (record.get_species_code(), record.get_year()),
+                'count': lambda record: (record.get_count(), record.get_year()),
+                'diver': lambda record: (record.get_diver_identication(), record.get_year()),
+                'transect': lambda record: (record.get_transect(), record.get_year())
+            }
+
+            # Validate sort criteria
+            if sort_by not in sort_keys:
+                print(f"Invalid sort criteria: {sort_by}")
+                return False
+
+            # Sort records using the appropriate key function
+            self.records.sort(key=sort_keys[sort_by], reverse=reverse)
+            
+            return True
+
+        except Exception as e:
+            print(f"Failed to sort records: {e}")
+            return False
+
+    def sort_records_by_multiple_criteria(self, criteria_list):
+        """
+        Sort records by multiple criteria in order of priority.
+        Advanced sorting feature demonstrating compound key sorting.
+
+        Args:
+            criteria_list (list): List of tuples (field, reverse) where field is the sort field
+                                 and reverse is boolean for sort order
+                                 Example: [('year', False), ('species', False)]
+
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            if not self.records:
+                print("No records to sort.")
+                return False
+
+            if not criteria_list:
+                print("No sorting criteria provided.")
+                return False
+
+            # Build compound key function
+            def compound_key(record):
+                key_values = []
+                for field, _ in criteria_list:
+                    if field == 'year':
+                        key_values.append(record.get_year())
+                    elif field == 'site':
+                        key_values.append(record.get_site_identification())
+                    elif field == 'species':
+                        key_values.append(record.get_species_code())
+                    elif field == 'count':
+                        key_values.append(record.get_count())
+                    elif field == 'diver':
+                        key_values.append(record.get_diver_identication())
+                    elif field == 'transect':
+                        key_values.append(record.get_transect())
+                return tuple(key_values)
+
+            # Sort using compound key (primary criterion determines overall reverse)
+            primary_reverse = criteria_list[0][1] if criteria_list else False
+            self.records.sort(key=compound_key, reverse=primary_reverse)
+            
+            return True
+
+        except Exception as e:
+            print(f"Failed to sort records by multiple criteria: {e}")
+            return False
+
+    def get_sorted_copy(self, sort_by="year", reverse=False):
+        """
+        Get a sorted copy of records without modifying the original list.
+        Demonstrates non-destructive sorting operation.
+
+        Args:
+            sort_by (str): Field to sort by
+            reverse (bool): Sort order
+
+        Returns:
+            list: Sorted copy of records, or empty list if error occurs
+        """
+        try:
+            if not self.records:
+                return []
+
+            sort_keys = {
+                'year': lambda record: (record.get_year(), record.get_site_identification()),
+                'site': lambda record: (record.get_site_identification(), record.get_year()),
+                'species': lambda record: (record.get_species_code(), record.get_year()),
+                'count': lambda record: (record.get_count(), record.get_year()),
+                'diver': lambda record: (record.get_diver_identication(), record.get_year()),
+                'transect': lambda record: (record.get_transect(), record.get_year())
+            }
+
+            if sort_by not in sort_keys:
+                return []
+
+            # Use sorted() to create new sorted list
+            return sorted(self.records, key=sort_keys[sort_by], reverse=reverse)
+
+        except Exception as e:
+            print(f"Failed to create sorted copy: {e}")
+            return []
 
     def validate_record_data(self, site_identification, year, diver_identication,
                              transect, average_depth_ft, species_code, count, survey_type):
