@@ -230,12 +230,35 @@ class KelpFishManager:
         Sort records in the data structure based on specified criteria.
         Demonstrates advanced data structure manipulation and sorting algorithms.
 
+        Algorithm Details:
+        - Uses Python's Timsort algorithm (hybrid merge-sort/insertion-sort)
+        - Time Complexity: O(n log n) average and worst case
+        - Space Complexity: O(n) for the sorting operation
+        - Stable sort: maintains relative order of equal elements
+
+        Sorting Strategy:
+        - Each sort uses compound keys (primary field + secondary year/site)
+        - Secondary keys ensure consistent ordering when primary values match
+        - Lambda functions create dynamic sort keys based on user selection
+
+        Supported Sort Fields:
+        - 'year': Sort by survey year (with site as tiebreaker)
+        - 'site': Sort by site identification (with year as tiebreaker)
+        - 'species': Sort by species code (with year as tiebreaker)
+        - 'count': Sort by observation count (with year as tiebreaker)
+        - 'diver': Sort by diver identification (with year as tiebreaker)
+        - 'transect': Sort by transect number (with year as tiebreaker)
+
         Args:
             sort_by (str): Field to sort by - options: 'year', 'site', 'species', 'count', 'diver', 'transect'
-            reverse (bool): If True, sort in descending order; if False, ascending order
+            reverse (bool): If True, sort in descending order; if False, ascending order (default)
 
         Returns:
-            bool: True if successful, False otherwise
+            bool: True if sorting successful, False if error or no records to sort
+
+        Example:
+            >>> manager.sort_records(sort_by="year", reverse=False)  # Ascending by year
+            >>> manager.sort_records(sort_by="count", reverse=True)  # Descending by count
         """
         try:
             if not self.records:
@@ -269,15 +292,41 @@ class KelpFishManager:
     def sort_records_by_multiple_criteria(self, criteria_list):
         """
         Sort records by multiple criteria in order of priority.
-        Advanced sorting feature demonstrating compound key sorting.
+        Advanced sorting feature demonstrating compound key sorting with hierarchical ordering.
+
+        Algorithm Details:
+        - Builds composite sort key from multiple field values
+        - Primary criterion has highest priority, secondary has next priority, etc.
+        - Uses tuple comparison for natural multi-level sorting
+        - Time Complexity: O(n log n) with compound key evaluation O(k) where k is criteria count
+
+        Compound Key Construction:
+        - Creates tuple of values in priority order: (primary_value, secondary_value, ...)
+        - Python's tuple comparison automatically handles multi-level sorting
+        - Each level is compared only when previous levels are equal
+
+        Implementation Strategy:
+        - Dynamic key function generated based on user-specified criteria
+        - Supports any combination of available sort fields
+        - Primary criterion's reverse flag determines overall sort direction
+
+        Use Cases:
+        - Sort by site, then by year within each site
+        - Sort by species, then by count within each species
+        - Complex hierarchical data organization
 
         Args:
             criteria_list (list): List of tuples (field, reverse) where field is the sort field
                                  and reverse is boolean for sort order
                                  Example: [('year', False), ('species', False)]
+                                 First tuple is primary criterion, second is secondary, etc.
 
         Returns:
-            bool: True if successful, False otherwise
+            bool: True if sorting successful, False if error, no records, or invalid criteria
+
+        Example:
+            >>> criteria = [('site', False), ('year', False)]
+            >>> manager.sort_records_by_multiple_criteria(criteria)  # Sort by site, then year
         """
         try:
             if not self.records:
@@ -319,14 +368,36 @@ class KelpFishManager:
     def get_sorted_copy(self, sort_by="year", reverse=False):
         """
         Get a sorted copy of records without modifying the original list.
-        Demonstrates non-destructive sorting operation.
+        Demonstrates non-destructive sorting operation for data structure preservation.
+
+        Algorithm Details:
+        - Uses Python's sorted() function which creates a new list
+        - Original self.records list remains unchanged
+        - Maintains data integrity while providing sorted view
+        - Memory efficient: only creates copy when needed
+
+        Non-Destructive Strategy:
+        - Original data structure preserved for continued operations
+        - Allows multiple sorted views without data loss
+        - Useful for preview operations before committing sort
+        - Enables comparison between sorted and unsorted data
+
+        Use Cases:
+        - Preview sorted data before applying permanent sort
+        - Generate reports without altering working dataset
+        - Maintain original load order while displaying sorted view
+        - Testing and validation of sort algorithms
 
         Args:
-            sort_by (str): Field to sort by
-            reverse (bool): Sort order
+            sort_by (str): Field to sort by - same options as sort_records()
+            reverse (bool): Sort order (True=descending, False=ascending)
 
         Returns:
-            list: Sorted copy of records, or empty list if error occurs
+            list: New sorted list of KelpFishRecord objects, or empty list if error/no records
+
+        Example:
+            >>> sorted_view = manager.get_sorted_copy(sort_by="species")
+            >>> # Original manager.records unchanged
         """
         try:
             if not self.records:

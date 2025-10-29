@@ -1,7 +1,7 @@
 """
 CST8002 - Data-Driven Programming - Practical Project 3
 Professor: Stanley Pieda
-Due Date: October 27, 2025
+Due Date: November 16, 2025
 Author: Jefperry Achu Chi
 
 kelp_fish_record.py - Model layer: Record object class for Pacific Rim NPR Coastal Marine Kelp Fish Community data
@@ -254,13 +254,21 @@ class KelpFishRecord:
     def __lt__(self, other):
         """
         Less than comparison operator for sorting support.
-        Default comparison based on year, then site identification.
+        Enables natural sorting of KelpFishRecord objects in data structures.
+        Default comparison based on year first (primary key), then site identification (secondary key).
+
+        Implementation Details:
+        - Used by Python's sort() and sorted() functions
+        - Enables comparison operations like: record1 < record2
+        - Supports advanced data structure sorting algorithms
+        - Returns NotImplemented for non-KelpFishRecord comparisons
 
         Args:
             other (KelpFishRecord): Another KelpFishRecord to compare with
 
         Returns:
             bool: True if this record is less than other record
+            NotImplemented: If other is not a KelpFishRecord instance
         """
         if not isinstance(other, KelpFishRecord):
             return NotImplemented
@@ -271,12 +279,19 @@ class KelpFishRecord:
     def __le__(self, other):
         """
         Less than or equal comparison operator.
+        Supports sorting and comparison operations in data structures.
+
+        Implementation Details:
+        - Combines __lt__ and __eq__ operators
+        - Used in sorting algorithms for proper ordering
+        - Essential for complete comparison protocol
 
         Args:
             other (KelpFishRecord): Another KelpFishRecord to compare with
 
         Returns:
             bool: True if this record is less than or equal to other record
+            NotImplemented: If other is not a KelpFishRecord instance
         """
         if not isinstance(other, KelpFishRecord):
             return NotImplemented
@@ -285,12 +300,19 @@ class KelpFishRecord:
     def __gt__(self, other):
         """
         Greater than comparison operator.
+        Supports descending sort operations and reverse ordering in data structures.
+
+        Implementation Details:
+        - Derived from __le__ operator for consistency
+        - Used in reverse sorting (descending order)
+        - Completes the comparison operator protocol
 
         Args:
             other (KelpFishRecord): Another KelpFishRecord to compare with
 
         Returns:
             bool: True if this record is greater than other record
+            NotImplemented: If other is not a KelpFishRecord instance
         """
         if not isinstance(other, KelpFishRecord):
             return NotImplemented
@@ -299,12 +321,19 @@ class KelpFishRecord:
     def __ge__(self, other):
         """
         Greater than or equal comparison operator.
+        Supports complete comparison protocol for sorting algorithms.
+
+        Implementation Details:
+        - Derived from __lt__ operator for consistency
+        - Enables proper boundary checks in sorting algorithms
+        - Required for comprehensive record comparison support
 
         Args:
             other (KelpFishRecord): Another KelpFishRecord to compare with
 
         Returns:
             bool: True if this record is greater than or equal to other record
+            NotImplemented: If other is not a KelpFishRecord instance
         """
         if not isinstance(other, KelpFishRecord):
             return NotImplemented

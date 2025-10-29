@@ -1,7 +1,7 @@
 """
 CST8002 - Data-Driven Programming - Practical Project 3
 Professor: Stanley Pieda
-Due Date: October 27, 2025
+Due Date: November 16, 2025
 Author: Jefperry Achu Chi
 
 console_interface.py - Presentation layer: Handles all user interactions and display logic
@@ -375,15 +375,43 @@ class ConsoleInterface:
 
     def sort_records_menu(self):
         """
-        Handle sorting records with various options.
-        Demonstrates advanced data structure manipulation and sorting algorithms.
+        Handle sorting records with various options in the user interface.
+        Demonstrates advanced data structure manipulation and sorting algorithms through interactive menu.
+
+        Presentation Layer Responsibilities:
+        - Presents sorting options to user in clear, numbered menu
+        - Validates user input for sort criteria selection
+        - Collects sort order preference (ascending/descending)
+        - Delegates actual sorting operation to business layer
+        - Displays results and preview of sorted data
+
+        User Interaction Flow:
+        1. Display available sorting fields (7 options)
+        2. Get user's field selection
+        3. Get sort order preference
+        4. Execute sort through business layer
+        5. Offer preview of sorted results
+        6. Display success/error feedback
+
+        Sorting Options:
+        - Single-field sorts: year, site, species, count, diver, transect
+        - Multi-criteria sort: compound sorting with priority levels
+
+        Error Handling:
+        - Validates numeric input for menu choices
+        - Checks for empty data before sorting
+        - Provides clear error messages for invalid selections
+        - Gracefully handles exceptions during sort operations
+
+        Returns:
+            None (void method - displays results directly to console)
         """
         print(f"\n--- Sort Records - {self.author_name} ---")
-        
+
         if self.manager.get_record_count() == 0:
             print("No records to sort. Please load data first.")
             return
-        
+
         print("Select sorting criterion:")
         print("1. Year")
         print("2. Site Identification")
@@ -392,10 +420,11 @@ class ConsoleInterface:
         print("5. Diver Identification")
         print("6. Transect")
         print("7. Multiple Criteria (Advanced)")
-        
+
         try:
-            sort_choice = int(input(f"\nEnter choice (1-7) - {self.author_name}: "))
-            
+            sort_choice = int(
+                input(f"\nEnter choice (1-7) - {self.author_name}: "))
+
             # Map choice to sort field
             sort_map = {
                 1: ('year', 'Year'),
@@ -405,89 +434,133 @@ class ConsoleInterface:
                 5: ('diver', 'Diver Identification'),
                 6: ('transect', 'Transect')
             }
-            
+
             if sort_choice == 7:
                 # Multiple criteria sorting
                 self.sort_by_multiple_criteria()
                 return
-            
+
             if sort_choice not in sort_map:
                 print("Invalid choice.")
                 return
-            
+
             sort_field, field_name = sort_map[sort_choice]
-            
+
             # Ask for sort order
-            order = input("Sort order - (A)scending or (D)escending? [A]: ").strip().upper()
+            order = input(
+                "Sort order - (A)scending or (D)escending? [A]: ").strip().upper()
             reverse = (order == 'D')
-            
-            print(f"\nSorting records by {field_name} in {'descending' if reverse else 'ascending'} order...")
-            
+
+            print(
+                f"\nSorting records by {field_name} in {'descending' if reverse else 'ascending'} order...")
+
             if self.manager.sort_records(sort_field, reverse):
                 print(f"Records sorted successfully by {field_name}!")
                 print(f"Total records: {self.manager.get_record_count()}")
-                
+
                 # Ask if user wants to see sorted records
-                show = input("\nDisplay sorted records? (Y/n): ").strip().lower()
+                show = input(
+                    "\nDisplay sorted records? (Y/n): ").strip().lower()
                 if show != 'n':
-                    print(f"\n--- First 10 Sorted Records - {self.author_name} ---")
+                    print(
+                        f"\n--- First 10 Sorted Records - {self.author_name} ---")
                     records = self.manager.get_all_records()[:10]
                     for i, record in enumerate(records, 1):
                         print(f"\nRecord {i}:")
                         self.print_record_details(record)
                     if self.manager.get_record_count() > 10:
-                        print(f"\n... and {self.manager.get_record_count() - 10} more records")
+                        print(
+                            f"\n... and {self.manager.get_record_count() - 10} more records")
             else:
                 print("Failed to sort records.")
-                
+
         except ValueError:
             print("Invalid input. Please enter a number.")
         except Exception as e:
             print(f"Error during sorting: {e}")
-    
+
     def sort_by_multiple_criteria(self):
         """
-        Handle sorting by multiple criteria.
-        Advanced sorting demonstration.
+        Handle sorting by multiple criteria with hierarchical priority.
+        Advanced sorting demonstration for compound key operations.
+
+        Presentation Layer Responsibilities:
+        - Guide user through multi-step criteria selection process
+        - Collect primary and secondary (optional) sort fields
+        - Gather sort order for each criterion
+        - Build criteria list for business layer processing
+        - Display compound sort results with preview option
+
+        Multi-Criteria Sorting Process:
+        1. Prompt for primary sort field (required)
+        2. Get primary sort order (ascending/descending)
+        3. Optionally collect secondary sort field
+        4. Get secondary sort order if applicable
+        5. Pass criteria list to business layer
+        6. Display results with option to preview sorted data
+
+        Criteria Structure:
+        - List of tuples: [(field1, reverse1), (field2, reverse2), ...]
+        - First tuple = highest priority (primary sort)
+        - Subsequent tuples = lower priority (tiebreakers)
+
+        Example User Flow:
+        - Primary: "site" with ascending order
+        - Secondary: "year" with ascending order
+        - Result: Records sorted by site, then by year within each site
+
+        Input Validation:
+        - Verifies field names against valid options
+        - Handles optional secondary criterion (can be skipped)
+        - Validates sort order input (A/D with default to Ascending)
+
+        Returns:
+            None (void method - displays results directly to console)
         """
         print(f"\n--- Sort by Multiple Criteria - {self.author_name} ---")
         print("Enter sorting criteria in order of priority.")
         print("Available fields: year, site, species, count, diver, transect")
-        
+
         try:
             criteria_list = []
-            
+
             # Get primary criterion
             primary = input("Primary sort field: ").strip().lower()
             if primary not in ['year', 'site', 'species', 'count', 'diver', 'transect']:
                 print("Invalid field name.")
                 return
-            
-            primary_order = input(f"Primary sort order - (A)scending or (D)escending? [A]: ").strip().upper()
+
+            primary_order = input(
+                f"Primary sort order - (A)scending or (D)escending? [A]: ").strip().upper()
             criteria_list.append((primary, primary_order == 'D'))
-            
+
             # Get secondary criterion (optional)
-            secondary = input("Secondary sort field (press Enter to skip): ").strip().lower()
+            secondary = input(
+                "Secondary sort field (press Enter to skip): ").strip().lower()
             if secondary and secondary in ['year', 'site', 'species', 'count', 'diver', 'transect']:
-                secondary_order = input(f"Secondary sort order - (A)scending or (D)escending? [A]: ").strip().upper()
+                secondary_order = input(
+                    f"Secondary sort order - (A)scending or (D)escending? [A]: ").strip().upper()
                 criteria_list.append((secondary, secondary_order == 'D'))
-            
-            print(f"\nSorting by multiple criteria: {[f'{c[0]}' for c in criteria_list]}...")
-            
+
+            print(
+                f"\nSorting by multiple criteria: {[f'{c[0]}' for c in criteria_list]}...")
+
             if self.manager.sort_records_by_multiple_criteria(criteria_list):
                 print("Records sorted successfully by multiple criteria!")
-                
+
                 # Show preview
-                show = input("\nDisplay sorted records? (Y/n): ").strip().lower()
+                show = input(
+                    "\nDisplay sorted records? (Y/n): ").strip().lower()
                 if show != 'n':
-                    print(f"\n--- First 10 Sorted Records - {self.author_name} ---")
+                    print(
+                        f"\n--- First 10 Sorted Records - {self.author_name} ---")
                     records = self.manager.get_all_records()[:10]
                     for i, record in enumerate(records, 1):
                         print(f"\nRecord {i}:")
                         self.print_record_details(record)
             else:
                 print("Failed to sort records.")
-                
+
         except Exception as e:
             print(f"Error during multiple criteria sorting: {e}")
 
