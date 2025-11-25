@@ -422,6 +422,72 @@ class KelpFishManager:
             print(f"Failed to create sorted copy: {e}")
             return []
 
+    def filter_records_advanced(self, criteria, logic="AND"):
+        """Filter records using multiple criteria with AND/OR logic.
+        
+        This method supports complex filtering scenarios where multiple field
+        criteria can be combined using either AND logic (all criteria must match)
+        or OR logic (at least one criterion must match).
+        
+        Args:
+            criteria: List of tuples where each tuple is (field_name, value)
+                     Example: [('year', 2015), ('species', 'FISH_A')]
+            logic: String "AND" or "OR" specifying how to combine criteria
+                  "AND" = record must match ALL criteria (default)
+                  "OR" = record must match AT LEAST ONE criterion
+                  
+        Returns:
+            List of KelpFishRecord objects matching the filter criteria
+            
+        Raises:
+            ValueError: If logic parameter is not "AND" or "OR"
+        
+        Example:
+            # Find all records from 2015 with species FISH_A
+            results = manager.filter_records_advanced(
+                [('year', 2015), ('species', 'FISH_A')], 
+                logic="AND"
+            )
+            
+            # Find records from either 2015 OR 2016
+            results = manager.filter_records_advanced(
+                [('year', 2015), ('year', 2016)],
+                logic="OR"
+            )
+        """
+        # Validate logic parameter
+        if logic not in ["AND", "OR"]:
+            raise ValueError("Logic parameter must be either 'AND' or 'OR'")
+        
+        # Handle empty criteria
+        if not criteria:
+            return self.records.copy()  # Return all records if no criteria
+        
+        filtered_results = []
+        
+        for record in self.records:
+            if logic == "AND":
+                # Record must match ALL criteria
+                matches_all = True
+                for field_name, value in criteria:
+                    if not record.matches_filter(field_name, value):
+                        matches_all = False
+                        break
+                if matches_all:
+                    filtered_results.append(record)
+                    
+            elif logic == "OR":
+                # Record must match AT LEAST ONE criterion
+                matches_any = False
+                for field_name, value in criteria:
+                    if record.matches_filter(field_name, value):
+                        matches_any = True
+                        break
+                if matches_any:
+                    filtered_results.append(record)
+        
+        return filtered_results
+
     def validate_record_data(self, site_identification, year, diver_identication,
                              transect, average_depth_ft, species_code, count, survey_type):
         """
