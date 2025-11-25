@@ -1,11 +1,11 @@
 """
-CST8002 - Data-Driven Programming - Practical Project 3
+CST8002 - Data-Driven Programming - Practical Project 4
 Professor: Stanley Pieda
-Due Date: November 16, 2025
+Due Date: November 30, 2025
 Author: Jefperry Achu Chi
 
 kelp_fish_manager.py - Business layer: Manages kelp fish data operations and business logic
-Enhanced with advanced data structure sorting capabilities
+Enhanced with advanced sorting and multi-column filtering capabilities
 """
 
 from persistence.data_access import DataAccess

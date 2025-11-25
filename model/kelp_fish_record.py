@@ -1,11 +1,11 @@
 """
-CST8002 - Data-Driven Programming - Practical Project 3
+CST8002 - Data-Driven Programming - Practical Project 4
 Professor: Stanley Pieda
-Due Date: November 16, 2025
+Due Date: November 30, 2025
 Author: Jefperry Achu Chi
 
 kelp_fish_record.py - Model layer: Record object class for Pacific Rim NPR Coastal Marine Kelp Fish Community data
-Enhanced with sorting support for advanced data structure operations
+Enhanced with sorting support and multi-column filtering capabilities
 """
 
 
@@ -338,3 +338,46 @@ class KelpFishRecord:
         if not isinstance(other, KelpFishRecord):
             return NotImplemented
         return not self < other
+
+    def matches_filter(self, field_name, value):
+        """
+        Check if this record matches a specific field filter criterion.
+        Supports multi-column filtering by enabling field-specific matching.
+
+        Implementation Details:
+        - Case-insensitive string comparison for text fields
+        - Exact match for numeric fields
+        - Returns False if field doesn't exist
+        - Used by business layer for advanced filtering operations
+
+        Args:
+            field_name (str): Name of the field to check ('year', 'site', 'species', 'count', etc.)
+            value: Value to match against (can be str or int depending on field)
+
+        Returns:
+            bool: True if field value matches the filter value, False otherwise
+
+        Example:
+            >>> record.matches_filter('year', 2015)
+            >>> record.matches_filter('species', 'FISH_A')
+        """
+        # Convert value to string for comparison
+        search_value = str(value).upper() if isinstance(value, str) else value
+
+        # Match against appropriate field
+        if field_name == 'year':
+            return self.year == value if isinstance(value, int) else self.year == int(value)
+        elif field_name == 'site':
+            return self.site_identification.upper() == search_value
+        elif field_name == 'species':
+            return self.species_code.upper() == search_value
+        elif field_name == 'count':
+            return self.count == value if isinstance(value, int) else self.count == int(value)
+        elif field_name == 'diver':
+            return self.diver_identication == value if isinstance(value, int) else self.diver_identication == int(value)
+        elif field_name == 'transect':
+            return self.transect == value if isinstance(value, int) else self.transect == int(value)
+        elif field_name == 'survey_type':
+            return self.survey_type.upper() == search_value
+        else:
+            return False

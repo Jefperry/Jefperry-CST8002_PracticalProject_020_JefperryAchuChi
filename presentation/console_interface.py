@@ -1,11 +1,11 @@
 """
-CST8002 - Data-Driven Programming - Practical Project 3
+CST8002 - Data-Driven Programming - Practical Project 4
 Professor: Stanley Pieda
-Due Date: November 16, 2025
+Due Date: November 30, 2025
 Author: Jefperry Achu Chi
 
 console_interface.py - Presentation layer: Handles all user interactions and display logic
-Enhanced with sorting functionality for advanced data structure operations
+Enhanced with sorting and advanced multi-column filtering functionality
 """
 
 from model.kelp_fish_record import KelpFishRecord
