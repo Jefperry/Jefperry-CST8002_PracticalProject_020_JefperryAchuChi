@@ -52,9 +52,10 @@ class ConsoleInterface:
         print("5. Edit Record")
         print("6. Delete Record")
         print("7. Sort Records")
-        print("8. Persist Data to File")
-        print("9. Show Statistics")
-        print("10. Exit")
+        print("8. Advanced Multi-Column Filter")
+        print("9. Persist Data to File")
+        print("10. Show Statistics")
+        print("11. Exit")
         print()
 
     def get_user_choice(self):
@@ -66,7 +67,7 @@ class ConsoleInterface:
         """
         try:
             choice = input(
-                f"\nEnter your choice (1-10) - {self.author_name}: ").strip()
+                f"\nEnter your choice (1-11) - {self.author_name}: ").strip()
             return int(choice)
         except ValueError:
             return -1
@@ -564,6 +565,109 @@ class ConsoleInterface:
         except Exception as e:
             print(f"Error during multiple criteria sorting: {e}")
 
+    def filter_records_advanced_menu(self):
+        """
+        Handle advanced multi-column filtering with AND/OR logic.
+        Allows users to build complex filter criteria interactively.
+        """
+        print(f"\n--- Advanced Multi-Column Filter - {self.author_name} ---")
+
+        if self.manager.get_record_count() == 0:
+            print("No data loaded. Please load data first.")
+            return
+
+        print("\nAvailable fields for filtering:")
+        print("  1. year (e.g., 2015)")
+        print("  2. site (e.g., BLMA)")
+        print("  3. species (e.g., SMYS)")
+        print("  4. count (e.g., 5)")
+        print("  5. diver (e.g., 1)")
+        print("  6. transect (e.g., 1)")
+        print("  7. survey_type (e.g., FISH)")
+
+        # Get filter logic
+        print("\nSelect filter logic:")
+        print("  1. AND (all criteria must match)")
+        print("  2. OR (at least one criterion must match)")
+
+        logic_choice = input(
+            f"Enter logic choice (1-2) - {self.author_name}: ").strip()
+        logic = "AND" if logic_choice == "1" else "OR"
+
+        print(f"\nSelected logic: {logic}")
+        print("\nEnter filter criteria (press Enter with empty field name to finish)")
+
+        criteria = []
+        criterion_count = 1
+
+        while True:
+            print(f"\n--- Criterion {criterion_count} ---")
+            field = input(
+                f"Field name (or press Enter to finish) - {self.author_name}: ").strip().lower()
+
+            if not field:
+                break
+
+            # Validate field name
+            valid_fields = ['year', 'site', 'species',
+                            'count', 'diver', 'transect', 'survey_type']
+            if field not in valid_fields:
+                print(
+                    f"Invalid field name. Must be one of: {', '.join(valid_fields)}")
+                continue
+
+            value = input(f"Value for {field}: ").strip()
+
+            # Convert numeric fields
+            if field in ['year', 'count', 'diver', 'transect']:
+                try:
+                    value = int(value)
+                except ValueError:
+                    print(f"Invalid value for {field}. Must be a number.")
+                    continue
+
+            criteria.append((field, value))
+            criterion_count += 1
+            print(f"Added criterion: {field} = {value}")
+
+        if not criteria:
+            print("No criteria specified. Returning to main menu.")
+            return
+
+        # Display criteria summary
+        print(f"\n--- Filter Summary - {self.author_name} ---")
+        print(f"Logic: {logic}")
+        print("Criteria:")
+        for i, (field, value) in enumerate(criteria, 1):
+            print(f"  {i}. {field} = {value}")
+
+        # Execute filter
+        print("\nApplying filter...")
+        try:
+            results = self.manager.filter_records_advanced(criteria, logic)
+
+            if results:
+                print(f"\nFound {len(results)} matching record(s):")
+
+                # Ask if user wants to see all results or limited
+                if len(results) > 10:
+                    show_all = input(
+                        f"\nShow all {len(results)} results? (y/n) - {self.author_name}: ").strip().lower()
+                    if show_all != 'y':
+                        results = results[:10]
+                        print(f"\nShowing first 10 results:")
+
+                for i, record in enumerate(results, 1):
+                    print(f"\n--- Result {i} ---")
+                    self.print_record_details(record)
+            else:
+                print("\nNo records match the specified criteria.")
+
+        except ValueError as e:
+            print(f"Error: {e}")
+        except Exception as e:
+            print(f"Unexpected error during filtering: {e}")
+
     def persist_data_menu(self):
         """
         Handle persisting data to file with GUID filename.
@@ -667,16 +771,18 @@ class ConsoleInterface:
             elif choice == 7:
                 self.sort_records_menu()
             elif choice == 8:
-                self.persist_data_menu()
+                self.filter_records_advanced_menu()
             elif choice == 9:
-                self.show_statistics_menu()
+                self.persist_data_menu()
             elif choice == 10:
+                self.show_statistics_menu()
+            elif choice == 11:
                 print(f"\nThank you for using the Kelp Fish Data Manager!")
                 print(f"Program by {self.author_name}")
                 print("Goodbye!")
                 break
             else:
-                print("Invalid choice. Please enter a number between 1 and 10.")
+                print("Invalid choice. Please enter a number between 1 and 11.")
 
             # Pause for user to see results
             input(
